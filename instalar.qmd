@@ -1,0 +1,176 @@
+---
+title: "Instalación de `R` y `RStudio`"
+engine: knitr
+---
+
+::: callout-warning
+Estas notas sólo funcionan con versiones de `R` superiores a la `4.2.0` del (2022-04-22). Si ya tienes una versión de `R` anterior (antes de abril-2022), desinstálala y reinstala una versión más reciente.
+:::
+
+Para instalar en tu computadora ve hacia la sección correspondiente. En todos los casos necesitas instalar **todos** los programas descritos en la instrucción correspondiente a tu sistema operativo. 
+
+-  [Windows](#windows)
+-  [Mac/OSX](#mac-osx)
+-  [Ubuntu](#ubuntu)
+
+::: callout-tip
+Alternativamente puedes abrir una cuenta gratuita en [Posit Cloud](https://posit.cloud/plans/free) para la duración del curso. Sin embargo no es la opción recomendada pues la cuenta gratuita es muy limitada en cuanto a capacidad de cómputo y memoria.
+:::
+
+## Windows {#windows}
+
+### Instalación de `R`
+
+1.  Accede a la página de CRAN (Comprehensive R Archive Network) <https://cran.r-project.org/>.
+
+2.  Da clic en `Download R for Windows` y luego en `Install R for the first time`. Finalmente, ejecuta el archivo `.exe` que se descarga al dar click en `r paste0("Download R ", R.Version()$major,".",R.Version()$minor," for Windows")` .
+
+### Instalación de `Rtools`
+
+1.  **Windows** requiere, adicionalmente que instales `Rtools`. Para ello ve a <https://cran.r-project.org/bin/windows/Rtools/> y selecciona `RTools 4.4`.
+
+2.  Da click en `Rtools44 installer` para descargar el archivo `.exe` y sigue las instrucciones en pantalla al abrirlo.
+
+::: callout-warning
+Si tienes una versión anterior de `R` debes descargar el `RTools` correspondiente. El `RTools 4.3` si tienes `R 4.3` ó `RTools 4.2` si tienes el `4.2`.
+:::
+
+### Instalación de \`RStudio\`\`
+
+1.  Finalmente instala `RStudio`. Para ello accede a la página <https://posit.co/download/rstudio-desktop/>.
+
+2.  Ve hacia donde dice `Install RStudio` y una descarga debe iniciarse.
+
+3.  Abre el archivo `.exe` y sigue las instrucciones en pantalla.
+
+::: callout-tip
+RStudio está en su fase de salida (digamos de aquí a 5 años) y será reemplazado por [Positron](https://github.com/posit-dev/positron) en el futuro. Por el momento nosotros seguimos enseñando `RStudio` pues Positron aún está en desarrollo experimental. Sin embargo, si te interesa experimentar, ¡descárgalo!
+:::
+
+## Mac (OSX) {#mac-osx}
+
+### Instalación de `R`
+
+1.  Accede a la página de CRAN (Comprehensive R Archive Network) <https://cran.r-project.org/>.
+
+2.  Selecciona `Download R for (Mac) OS X` y luego elige `r paste0("R-", R.Version()$major,".",R.Version()$minor,".pkg")` de acuerdo con tu procesador.
+
+::: callout-note
+Para saber si tu Mac tiene chip Intel o M1 da click en la manzanita en la esquina superior izquierda de la pantalla y pon `Acerca de esta Mac`. La entrada del procesador te dirá si es Intel o Apple Silicon.
+:::
+
+3.  Sigue las instrucciones del `.dmg` que descargaste.
+
+### Instalación de `XQuartz`
+
+1.  Adicionalmente las Mac requieren la instalación de `XQuartz`. Accede a <https://www.xquartz.org/> y descarga el archivo `.pkg`.
+
+2.  Ábrelo y sigue las instrucciones en pantalla.
+
+### Instalación de `RStudio`
+
+1.  Finalmente instala `RStudio`. Para ello accede a la página <https://posit.co/download/rstudio-desktop/>.
+
+2.  Ve hacia donde dice `Install RStudio` y una descarga debe iniciarse.
+
+3.  Abre el archivo `.dmg` y sigue las instrucciones en pantalla.
+
+::: callout-tip
+RStudio está en su fase de salida (digamos de aquí a 5 años) y será reemplazado por [Positron](https://github.com/posit-dev/positron) en el futuro. Por el momento nosotros seguimos enseñando `RStudio` pues Positron aún está en desarrollo experimental. Sin embargo, si te interesa experimentar, ¡descárgalo!
+:::
+
+## Ubuntu
+
+### Instalación de `R`
+
+1.  Ve a tu terminal y actualiza tus índices
+
+```{bash}
+#| eval: false
+sudo apt update
+```
+
+2.  Instala paquetes adicionales requeridos:
+
+```{bash}
+#| eval: false
+sudo apt install --no-install-recommends software-properties-common dirmngr
+```
+
+3.  `R` vive en un repositorio externo por lo que hay que agregarlo
+
+```{bash}
+#| eval: false
+wget -qO- \
+https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc \
+| sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc
+```
+
+::: callout-tip
+Verifica la llave del repositorio con
+
+```{bash}
+#| eval: false
+run gpg --show-keys /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc 
+```
+
+la huella debería ser `E298A3A825C0D65DFD57CBB651716619E084DAB9`.
+:::
+
+4.  Agrega el repositorio a tu lista de fuentes:
+
+```{bash}
+#| eval: false
+sudo add-apt-repository \ 
+"deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
+```
+
+5.  Actualiza e instala:
+
+```{bash}
+#| eval: false
+sudo apt update
+sudo apt install r-base r-base-dev
+```
+
+::: callout-tip
+Algunos repositorios requieren paquetes adicionales para funcionar. Puedes instalarlos por tu cuenta o bien puedes agregar el siguiente repositorio e instalarlos desde antes:
+
+```{bash}
+#| eval: false
+sudo add-apt-repository ppa:c2d4u.team/c2d4u4.0+
+sudo apt update
+sudo apt install --no-install-recommends \ 
+build-dep \ 
+r-cran-tidyverse \ 
+r-cran-foreign \ 
+r-cran-mass \ 
+r-cran-matrix \ 
+r-cran-spatial
+```
+:::
+
+## Instalación de `RStudio`
+
+1.  Ve a <https://posit.co/download/rstudio-desktop/>.
+
+2.  Da click en `Download RStudio Desktop`
+
+3.  En la terminal ve a descargas
+
+4.  Instala con la siguiente instrucción (cambia el nombre del archivo `deb` por el que tú descargaste)
+
+```{bash}
+#| eval: false
+sudo dpkg -i rstudio-2023.12.1-402-amd64.deb
+```
+
+# ¿Qué acabo de instalar?
+
+`R` es un software estadístico que realiza cálculos. Piensa en él como el motor que realiza todos los cálculos. `R` es genial. Pero es un software diseñado principalmente para interactuar con computadoras, no con humanos. Así que no tiene una gran interfaz. Ahí es donde `RStudio` entra.
+
+`RStudio` es lo que los informáticos llaman Entorno de Desarrollo Integrado (IDE en inglés). Es decir, es una pieza de software diseñada para nosotros, los humanos, para interactuar con `R`. Mientras que `R` realiza todos los cálculos, `RStudio` es la capa que conecta a los usuarios humanos con el software estadístico (R). En la analogía del motor, `RStudio` son los pedales que conectan el motor del coche con el conductor. De la misma manera como `Google Chrome` es una forma de que los humanos interactuemos con el Internet o `Outlook` una forma de interactuar con el correo electrónico. Para nuestros propósitos sólo interactuaremos con `R` a través de `RStudio`.
+
+`RTools` es una colección de programas adicionales para `Windows`. Facilitan la instalación de ciertos paquetes de `R` (es decir, funciones adicionales para R). Una vez que hayas instalado `RTools` no tendrás que volver a preocuparte por él (o abrirlo de nuevo) porque `R` se conectará automáticamente a él. Si quieres ponerte más técnico, `RTools` son (entre otras cosas) compiladores de `C`, `C++` y `Fortran` que se enlazan con R.
+
+`XQuartz` es una pieza de software que venía en los viejos ordenadores Macintosh. Hoy en día está descatalogado por Apple. Sin embargo, es utilizado por `R` para generar gráficos y otras visualizaciones. Porque `R` lo necesita y los Macs de hoy en día no lo tienen, es necesario instalarlo separado.

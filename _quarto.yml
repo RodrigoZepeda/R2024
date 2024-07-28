@@ -1,0 +1,25 @@
+project:
+  type: book
+
+book:
+  title: "Uso de R para toma de decisiones en salud"
+  author: "Rodrigo Zepeda Tello"
+  date: today
+  chapters:
+    - index.qmd
+    - instalar.qmd
+    - references.qmd
+
+options:
+  engine: knitr
+  
+bibliography: references.bib
+
+format:
+  html:
+    theme: sandstone
+  pdf:
+    documentclass: scrreprt
+
+
+

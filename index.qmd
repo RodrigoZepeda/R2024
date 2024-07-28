@@ -1,0 +1,8 @@
+# Prefacio {.unnumbered}
+
+Estas notas son para el curso de `Uso de R para toma de decisiones en salud`. Las notas están en proceso de desarrollo continuo por lo que pueden cambiar. Si encuentras un error en las notas favor de decirnos. 
+
+::: {.callout-note}
+Los datos referidos en las notas están en el Github de estas notas. 
+:::
+
