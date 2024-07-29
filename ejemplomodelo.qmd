@@ -1,0 +1,310 @@
+# Un modelo de predicción
+
+Comenzaremos con un ejemplo de modelo de predicción. La idea de iniciar con éste es mostrar cómo funciona el flujo de trabajo. Por ahora utilizaremos `tidymodels` una herramienta que te permite aplicar muchos modelos distintos usando exactamente la misma forma de escribir. Veremos la lógica tras cada punto y construiremos nuestro modelo. Finalmente, compararemos dos modelos distintos. 
+
+## El modelo
+
+Nuestro modelo busca predecir las covariables individuales que determinan **Dolor Crónico de Alto Impacto (HICP)**. La base de datos que utilizaremos es `Falasinnu2023.RData`. Ésta proviene del `National Health Interview Survey (NHIS) 2016 ` y fueron utilizados en @falasinnu2023problem para predecir dolor crónico de alto impacto (HICP). Las siguientes variables están presentes en la base:
+
+| Variable                   | Descripción                                |
+|-------------------------------|--------------------------------------------|
+| `studyid`                       | Identificador único                        |
+| `psu`                           | Pseudo-PSU (muestreo)                                 |
+| `strata`                        | Pseudoestrato (muestreo)                            |
+| `weight`                        | Peso muestral (muestreo)                             |
+| `HICP`                          | Dolor Crónico de Alto Impacto  (variable de interés)       |
+| `age`                           | Edad                                       |
+| `sex`                           | Sexo                                       |
+| `hhsize`                        | Número de personas en el hogar             |
+| `born`                          | Nacionalidad                               |
+| `marital`                       | Estado civil                               |
+| `region`                        | Región                                     |
+| `race`                          | Raza/etnia                                 |
+| `education`                     | Educación                                  |
+| `employment.status`             | Situación laboral                          |
+| `poverty.status`                | Estado de pobreza                          |
+| `veteran`                       | Veterano                                   |
+| `insurance`                     | Cobertura de seguro médico                 |
+| `sex.orientation`               | Orientación sexual                         |
+| `worried.money`                 | Preocupado por el dinero                   |
+| `good.neighborhood`             | Buen vecindario                            |
+| `psy.symptom`                   | Síntomas psicológicos                      |
+| `visit.ED`                      | Número de veces en Urgencias               |
+| `surgery`                       | Número de cirugías en los últimos 12 meses |
+| `dr.visit`                      | Tiempo transcurrido desde las visitas al médico |
+| `cancer`                        | Cáncer                                     |
+| `asthma`                        | Asma                                       |
+| `htn`                           | Hipertensión                               |
+| `liver.disease`                 | Enfermedad hepática                        |
+| `diabetes`                      | Diabetes                                   |
+| `ulcer`                         | Úlcera                                     |
+| `stroke`                        | Accidente cerebrovascular                  |
+| `emphysema`                     | Enfisema                                   |
+| `copd`                          | EPOC                                       |
+| `high.cholesterol`              | Colesterol alto                            |
+| `coronary.heart.disease`        | Enfermedad coronaria                       |
+| `angina`                        | Angina de pecho                            |
+| `heart.attack`                  | Infarto de miocardio                       |
+| `heart.disease`                 | Enfermedad cardíaca                        |
+| `arthritis`                     | Artritis y reumatismo                      |
+| `crohns.disease`                | Enfermedad de Crohn                        |
+| `place.routine.care`            | Lugar habitual de atención rutinaria       |
+| `trouble.asleep`                | Dificultad para conciliar el sueño         |
+| `obese`                         | Obesidad                                   |
+| `current.smoker`                | Fumador actual                             |
+| `heavy.drinker`                 | Bebedor empedernido                        |
+| `hospitalization`               | Días de estancia hospitalaria              |
+| `better.health.status`          | Mejor estado de salud                      |
+| `physical.activity`             | Actividad física                           |
+
+
+## Preliminares
+
+::: callout-tip
+Recuerda que para instalar un paquete como `tidymodels` basta con:
+
+```{r}
+#| eval: false
+install.packages("tidymodels")
+```
+
+y que éste proceso se hace una sola vez. 
+:::
+
+Comencemos instalando `tidymodels` y utilizando `Falasinnu2023.RData` como la fuente de datos. 
+
+```{r}
+#| message: false
+#Librerías de los modelos y de análisis de datos
+library(tidymodels)
+library(tidyverse)
+library(gtsummary)
+library(glmnet)
+
+#Agregar esto siempre para que sepa R que debe priorizar tidymodels por
+#encima de cualquier otra librería. 
+tidymodels_prefer()
+```
+
+
+Carguemos la base de datos con `load`:
+
+```{r}
+load("datos/Falasinnu2023.RData")
+```
+
+## Análisis exploratorio de los datos
+
+Una vez cargada la base de datos podemos utilizar `glimpse` para ver las variables que contiene:
+
+```{r}
+dat |> glimpse()
+```
+
+Notamos que la base de datos contiene un total de `{r} dat |> nrow() |> scales::comma()` individuos. 
+
+```{r}
+#Cambio la definición para que diga con dolor / sin dolor
+dat <- dat |> 
+  mutate(HICP_label = factor(HICP, labels = c("sin dolor", "con dolor")))
+```
+Podemos ver cómo se distribuye todo con una tabla breve de resumen por algunas covariables:
+
+```{r}
+dat |> 
+  tbl_summary(
+    include = c("sex", "obese", "age", "employment.status"),
+    by = HICP, 
+  )
+```
+Las covariables seleccionadas no son al azar son las que @csenturk2023high seleccionaron como covariables que afectaban el dolor de alto impacto. 
+
+Recuerda que lo mismo puede hacerse de manera más lenta con `count` y `mutate`. Por ejemplo para contar cuántos hubo por tipo de empleo:
+
+```{r}
+#Creamos una nueva base que tenga la información de la proporción
+proporcion_tbl_1 <- dat |> 
+  group_by(`employment.status`, HICP_label) |> 
+  count() |> 
+  group_by(HICP_label) |> 
+  mutate(proporcion = n / sum(n)) |> 
+  ungroup()
+```
+
+y que se puede representar gráficamente el conteo con `ggplot2`:
+
+```{r}
+#Grafico
+ggplot(proporcion_tbl_1) +
+  geom_col(aes(x = employment.status, y = proporcion, fill = HICP_label),
+           position = "dodge") +
+  theme_bw() +
+  scale_fill_manual("", values = c("deepskyblue2","deepskyblue4")) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(
+    x = "Hospitalizado",
+    y = "Proporción",
+    title = "Proporción de personas con dolor crónico de alto impacto",
+    subtitle = "Fuente: Falasinnu et al"
+  ) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+```
+
+## Modelo (versión 1)
+
+El modelo que nos interesa construir es un modelo de **clasificación** que **prediga** si un nuevo paciente será o no con dolor crónico de alto impacto. Inicialmente lo que haremos será dividir nuestra base de datos en dos conjuntos: de entrenamiento y de prueba. 
+
+El conjunto de entrenamiento es para construir un modelo; el conjunto de prueba es para evaluar el modelo. Es decir, por un lado **entrenamiento** será usado para construir el modelo de predicción y por otro utilizaremos **prueba** para ver qué tan buen modelo es para predecir. 
+
+```{r}
+# Dividir los datos en entrenamiento y prueba
+set.seed(235724)
+data_split <- initial_split(dat, prop = 0.8) #La regla de dedo es 80% en entrenar / probar
+train_data <- training(data_split)
+test_data  <- testing(data_split)
+```
+
+Podemos ver que sí dividió los datos en aproximadamente el 80%:
+
+```{r}
+train_data |> nrow()
+test_data |> nrow()
+```
+
+Por otro lado utilizaremos un modelo de regresión logística:
+
+```{r}
+# Especificar el modelo de regresión logística
+logistic_model <- logistic_reg() |> 
+  set_engine("glm")
+```
+
+Se agrega finalmente una receta de lo que se desea hacer en este caso es modelar `HIPC` en tèrminos de `sex`, `obesity` y `employment.status`. 
+
+```{r}
+# Crear una receta para el preprocesamiento
+rec <- recipe(HICP_label ~ sex + obese + employment.status, data = dat) 
+```
+
+Todo se agrega en `R` dentro de un `workflow`:
+
+```{r}
+modelaje <- workflow() |> 
+  add_recipe(rec) |> 
+  add_model(logistic_model) #Pueden agregarse más modelos poniendo más add_models aquí!
+```
+
+Finalmente ajustamos el modelo:
+
+```{r}
+logistic_fit <- modelaje |> 
+  fit(data = train_data)
+```
+
+Y vemos cómo se ven los predichos usando `predict`:
+
+```{r}
+# Predecir en los datos de prueba
+logistic_preds <- logistic_fit %>%
+  predict(new_data = test_data) %>%
+  bind_cols(test_data)
+```
+
+Podemos estimar la matriz de confusión para ver qué tan bueno es el modelo:
+
+```{r}
+logistic_preds |> 
+  conf_mat(truth = HICP_label, estimate = .pred_class)
+```
+
+Es un modelo muy malo pues a todos los predijo `sin_dolor`. Veamos un segundo modelo!
+
+## Modelo (versión 2)
+
+En este caso utilizaremos un modelo `LASSO`. LASSO es un modelo de regresión logística que automáticamente selecciona las variables que mejor ayudan a predecir. Veremos con mayor profundidad este concepto más adelante por ahora ajustemos el modelo agregando a un nuevo `workflow` del que ya teníamos:
+
+```{r}
+# Especificar el modelo de regresión logística
+lasso_model <- logistic_reg(penalty = 0.2, mixture = 0.1) |> 
+  set_engine("glmnet")
+```
+
+
+Agregamos a un nuevo workflow:
+
+```{r}
+modelaje_3 <- workflow() |> 
+  add_recipe(
+    recipe(HICP_label ~ ., data = dat) |> 
+      step_rm(studyid) |> 
+      step_unknown(all_nominal_predictors()) |> 
+      step_dummy(all_nominal_predictors()) |> 
+      step_naomit(all_predictors()) 
+  ) |> 
+  add_model(lasso_model) 
+```
+
+Ajustamos
+
+```{r}
+lasso_fit <- modelaje_3 |> 
+  fit(data = train_data)
+```
+
+
+Y vemos cómo se ven los predichos usando `predict`:
+
+```{r}
+# Predecir en los datos de prueba
+lasso_preds <- lasso_fit %>%
+  predict(new_data = test_data) %>%
+  bind_cols(test_data)
+```
+
+Podemos estimar la matriz de confusión para ver qué tan bueno es el modelo:
+
+```{r}
+lasso_preds |> 
+  conf_mat(truth = HICP_label, estimate = .pred_class)
+```
+
+¡Mucho mejor! 
+
+
+El proceso de un modelo como vimos es entonces:
+
+0. Obtener un objetivo
+1. Procesamiento/transformación de los datos
+2. Dividir los datos en entrenamiento y prueba. 
+3. Elegir el modelo
+4. Ajustar el modelo
+5. (**Por ver**) determinación de la calidad del modelo
+
+## Actividad 1 {#act1}
+
+1. Con tu conocimiento (poco o mucho) de dolor crónico de alto impacto, construye un modelo logístico (no LASSO) distinto al que aquí se especifica. Llámale `modelo_3`. 
+
+2. Utilizando exactamente las mismas variables que yo utilicé cambia el modelo en `add_model` al siguiente de aprendizaje de máquina:
+
+```{r}
+rf <- boost_tree(mode = "classification") |>
+  set_engine("xgboost")
+```
+
+
+## Actividad 2
+
+1. Compara los modelos realizados en la [actividad 1](#act1). Determina cuál es el mejor modelo según las métricas de comparación. 
+
+## Actividad 3
+
+1. Utilizando la base de datos `datos/hechos_transito.rds` consturye un modelo que prediga si dado un hecho de tránsito habrá o no personas fallecidas en función de las covariables. 
+
+2. Construye un segundo modelo incluyendo todas las covariables excepto `folio`, `hora_evento`, `matricula_unidad_medica` y `sector`. Utiliza el modelo que desees (yo recomiendo regresión LASSO pero puedes elegir lo que quieras). 
+
+3. Compara ambos modelos y determina cuál es el mejor para predecir. 
+
+
+
+
+

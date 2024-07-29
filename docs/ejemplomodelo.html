@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Uso de R para toma de decisiones en salud - 3&nbsp; Un modelo de predicción</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./datos.html" rel="next">
+<link href="./modelos.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ejemplomodelo.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Un modelo de predicción</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Uso de R para toma de decisiones en salud</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./instalar.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Instalación de <code>R</code> y <code>RStudio</code></span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./modelos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Modelos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ejemplomodelo.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Un modelo de predicción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./datos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Datos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./paquetes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Paquetes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#el-modelo" id="toc-el-modelo" class="nav-link active" data-scroll-target="#el-modelo"><span class="header-section-number">3.1</span> El modelo</a></li>
+  <li><a href="#preliminares" id="toc-preliminares" class="nav-link" data-scroll-target="#preliminares"><span class="header-section-number">3.2</span> Preliminares</a></li>
+  <li><a href="#análisis-exploratorio-de-los-datos" id="toc-análisis-exploratorio-de-los-datos" class="nav-link" data-scroll-target="#análisis-exploratorio-de-los-datos"><span class="header-section-number">3.3</span> Análisis exploratorio de los datos</a></li>
+  <li><a href="#modelo-versión-1" id="toc-modelo-versión-1" class="nav-link" data-scroll-target="#modelo-versión-1"><span class="header-section-number">3.4</span> Modelo (versión 1)</a></li>
+  <li><a href="#modelo-versión-2" id="toc-modelo-versión-2" class="nav-link" data-scroll-target="#modelo-versión-2"><span class="header-section-number">3.5</span> Modelo (versión 2)</a></li>
+  <li><a href="#act1" id="toc-act1" class="nav-link" data-scroll-target="#act1"><span class="header-section-number">3.6</span> Actividad 1</a></li>
+  <li><a href="#actividad-2" id="toc-actividad-2" class="nav-link" data-scroll-target="#actividad-2"><span class="header-section-number">3.7</span> Actividad 2</a></li>
+  <li><a href="#actividad-3" id="toc-actividad-3" class="nav-link" data-scroll-target="#actividad-3"><span class="header-section-number">3.8</span> Actividad 3</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Un modelo de predicción</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Comenzaremos con un ejemplo de modelo de predicción. La idea de iniciar con éste es mostrar cómo funciona el flujo de trabajo. Por ahora utilizaremos <code>tidymodels</code> una herramienta que te permite aplicar muchos modelos distintos usando exactamente la misma forma de escribir. Veremos la lógica tras cada punto y construiremos nuestro modelo. Finalmente, compararemos dos modelos distintos.</p>
+<section id="el-modelo" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="el-modelo"><span class="header-section-number">3.1</span> El modelo</h2>
+<p>Nuestro modelo busca predecir las covariables individuales que determinan <strong>Dolor Crónico de Alto Impacto (HICP)</strong>. La base de datos que utilizaremos es <code>Falasinnu2023.RData</code>. Ésta proviene del <code>National Health Interview Survey (NHIS) 2016</code> y fueron utilizados en <span class="citation" data-cites="falasinnu2023problem">Falasinnu et al. (<a href="references.html#ref-falasinnu2023problem" role="doc-biblioref">2023</a>)</span> para predecir dolor crónico de alto impacto (HICP). Las siguientes variables están presentes en la base:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 41%">
+<col style="width: 58%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>studyid</code></td>
+<td>Identificador único</td>
+</tr>
+<tr class="even">
+<td><code>psu</code></td>
+<td>Pseudo-PSU (muestreo)</td>
+</tr>
+<tr class="odd">
+<td><code>strata</code></td>
+<td>Pseudoestrato (muestreo)</td>
+</tr>
+<tr class="even">
+<td><code>weight</code></td>
+<td>Peso muestral (muestreo)</td>
+</tr>
+<tr class="odd">
+<td><code>HICP</code></td>
+<td>Dolor Crónico de Alto Impacto (variable de interés)</td>
+</tr>
+<tr class="even">
+<td><code>age</code></td>
+<td>Edad</td>
+</tr>
+<tr class="odd">
+<td><code>sex</code></td>
+<td>Sexo</td>
+</tr>
+<tr class="even">
+<td><code>hhsize</code></td>
+<td>Número de personas en el hogar</td>
+</tr>
+<tr class="odd">
+<td><code>born</code></td>
+<td>Nacionalidad</td>
+</tr>
+<tr class="even">
+<td><code>marital</code></td>
+<td>Estado civil</td>
+</tr>
+<tr class="odd">
+<td><code>region</code></td>
+<td>Región</td>
+</tr>
+<tr class="even">
+<td><code>race</code></td>
+<td>Raza/etnia</td>
+</tr>
+<tr class="odd">
+<td><code>education</code></td>
+<td>Educación</td>
+</tr>
+<tr class="even">
+<td><code>employment.status</code></td>
+<td>Situación laboral</td>
+</tr>
+<tr class="odd">
+<td><code>poverty.status</code></td>
+<td>Estado de pobreza</td>
+</tr>
+<tr class="even">
+<td><code>veteran</code></td>
+<td>Veterano</td>
+</tr>
+<tr class="odd">
+<td><code>insurance</code></td>
+<td>Cobertura de seguro médico</td>
+</tr>
+<tr class="even">
+<td><code>sex.orientation</code></td>
+<td>Orientación sexual</td>
+</tr>
+<tr class="odd">
+<td><code>worried.money</code></td>
+<td>Preocupado por el dinero</td>
+</tr>
+<tr class="even">
+<td><code>good.neighborhood</code></td>
+<td>Buen vecindario</td>
+</tr>
+<tr class="odd">
+<td><code>psy.symptom</code></td>
+<td>Síntomas psicológicos</td>
+</tr>
+<tr class="even">
+<td><code>visit.ED</code></td>
+<td>Número de veces en Urgencias</td>
+</tr>
+<tr class="odd">
+<td><code>surgery</code></td>
+<td>Número de cirugías en los últimos 12 meses</td>
+</tr>
+<tr class="even">
+<td><code>dr.visit</code></td>
+<td>Tiempo transcurrido desde las visitas al médico</td>
+</tr>
+<tr class="odd">
+<td><code>cancer</code></td>
+<td>Cáncer</td>
+</tr>
+<tr class="even">
+<td><code>asthma</code></td>
+<td>Asma</td>
+</tr>
+<tr class="odd">
+<td><code>htn</code></td>
+<td>Hipertensión</td>
+</tr>
+<tr class="even">
+<td><code>liver.disease</code></td>
+<td>Enfermedad hepática</td>
+</tr>
+<tr class="odd">
+<td><code>diabetes</code></td>
+<td>Diabetes</td>
+</tr>
+<tr class="even">
+<td><code>ulcer</code></td>
+<td>Úlcera</td>
+</tr>
+<tr class="odd">
+<td><code>stroke</code></td>
+<td>Accidente cerebrovascular</td>
+</tr>
+<tr class="even">
+<td><code>emphysema</code></td>
+<td>Enfisema</td>
+</tr>
+<tr class="odd">
+<td><code>copd</code></td>
+<td>EPOC</td>
+</tr>
+<tr class="even">
+<td><code>high.cholesterol</code></td>
+<td>Colesterol alto</td>
+</tr>
+<tr class="odd">
+<td><code>coronary.heart.disease</code></td>
+<td>Enfermedad coronaria</td>
+</tr>
+<tr class="even">
+<td><code>angina</code></td>
+<td>Angina de pecho</td>
+</tr>
+<tr class="odd">
+<td><code>heart.attack</code></td>
+<td>Infarto de miocardio</td>
+</tr>
+<tr class="even">
+<td><code>heart.disease</code></td>
+<td>Enfermedad cardíaca</td>
+</tr>
+<tr class="odd">
+<td><code>arthritis</code></td>
+<td>Artritis y reumatismo</td>
+</tr>
+<tr class="even">
+<td><code>crohns.disease</code></td>
+<td>Enfermedad de Crohn</td>
+</tr>
+<tr class="odd">
+<td><code>place.routine.care</code></td>
+<td>Lugar habitual de atención rutinaria</td>
+</tr>
+<tr class="even">
+<td><code>trouble.asleep</code></td>
+<td>Dificultad para conciliar el sueño</td>
+</tr>
+<tr class="odd">
+<td><code>obese</code></td>
+<td>Obesidad</td>
+</tr>
+<tr class="even">
+<td><code>current.smoker</code></td>
+<td>Fumador actual</td>
+</tr>
+<tr class="odd">
+<td><code>heavy.drinker</code></td>
+<td>Bebedor empedernido</td>
+</tr>
+<tr class="even">
+<td><code>hospitalization</code></td>
+<td>Días de estancia hospitalaria</td>
+</tr>
+<tr class="odd">
+<td><code>better.health.status</code></td>
+<td>Mejor estado de salud</td>
+</tr>
+<tr class="even">
+<td><code>physical.activity</code></td>
+<td>Actividad física</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="preliminares" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="preliminares"><span class="header-section-number">3.2</span> Preliminares</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Recuerda que para instalar un paquete como <code>tidymodels</code> basta con:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"tidymodels"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>y que éste proceso se hace una sola vez.</p>
+</div>
+</div>
+<p>Comencemos instalando <code>tidymodels</code> y utilizando <code>Falasinnu2023.RData</code> como la fuente de datos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Librerías de los modelos y de análisis de datos</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtsummary)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#Agregar esto siempre para que sepa R que debe priorizar tidymodels por</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#encima de cualquier otra librería. </span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tidymodels_prefer</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Carguemos la base de datos con <code>load</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"datos/Falasinnu2023.RData"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="análisis-exploratorio-de-los-datos" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="análisis-exploratorio-de-los-datos"><span class="header-section-number">3.3</span> Análisis exploratorio de los datos</h2>
+<p>Una vez cargada la base de datos podemos utilizar <code>glimpse</code> para ver las variables que contiene:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 8,881
+Columns: 49
+$ studyid                &lt;chr&gt; "20160000020101", "20160000250101", "2016000026…
+$ psu                    &lt;fct&gt; 2, 2, 5, 57, 26, 46, 36, 12, 6, 55, 43, 4, 9, 3…
+$ strata                 &lt;fct&gt; 149, 117, 149, 100, 136, 122, 103, 130, 121, 10…
+$ weight                 &lt;int&gt; 1717, 4088, 2566, 1311, 2903, 3781, 1278, 2995,…
+$ HICP                   &lt;dbl&gt; 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0,…
+$ age                    &lt;fct&gt; 65+, 65+, 65+, 65+, 65+, 65+, 65+, 65+, 65+, 65…
+$ sex                    &lt;fct&gt; Male, Male, Male, Male, Female, Female, Female,…
+$ hhsize                 &lt;int&gt; 1, 2, 3, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2,…
+$ born                   &lt;fct&gt; Born in US, Other place, Born in US, Born in US…
+$ marital                &lt;fct&gt; Divorced/separated, Married/with partner, Marri…
+$ region                 &lt;fct&gt; South, Midwest, South, West, South, South, Sout…
+$ race                   &lt;fct&gt; White, Others, White, White, Black, White, Whit…
+$ education              &lt;fct&gt; High school/GED, Bachelors degree or higher, So…
+$ employment.status      &lt;fct&gt; Worked previously, Employed non-hourly, Worked …
+$ poverty.status         &lt;fct&gt; 200-400% FPL, 400%+ FPL, 200-400% FPL, 400%+ FP…
+$ veteran                &lt;fct&gt; No, No, Yes, Yes, No, No, No, No, No, No, No, N…
+$ insurance              &lt;fct&gt; Medicaid/Medicare, Privately Insured, Other, Ot…
+$ sex.orientation        &lt;fct&gt; Heterosexual, Other, Heterosexual, Heterosexual…
+$ worried.money          &lt;fct&gt; No, No, Yes, No, Yes, No, No, No, Yes, No, Yes,…
+$ good.neighborhood      &lt;fct&gt; Yes, No, No, Yes, No, Yes, Yes, Yes, Yes, Yes, …
+$ psy.symptom            &lt;fct&gt; No, No, No, No, No, No, Yes, No, No, No, No, No…
+$ visit.ED               &lt;fct&gt; None, NA, None, None, None, None, One, None, No…
+$ surgery                &lt;fct&gt; None, None, None, One, None, None, None, One, N…
+$ dr.visit               &lt;fct&gt; &lt;6 months, NA, &lt;6 months, &lt;6 months, &lt;6 months,…
+$ cancer                 &lt;fct&gt; No, Yes, No, No, No, Yes, Yes, No, Yes, No, Yes…
+$ asthma                 &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, Yes, No…
+$ htn                    &lt;fct&gt; Yes, No, Yes, Yes, Yes, Yes, Yes, No, Yes, Yes,…
+$ liver.disease          &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, No, No,…
+$ diabetes               &lt;fct&gt; No, No, No, No, No, No, No, No, Yes, No, No, No…
+$ ulcer                  &lt;fct&gt; No, No, Yes, No, No, No, No, Yes, No, No, Yes, …
+$ stroke                 &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, Yes, No…
+$ emphysema              &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, Yes, No…
+$ copd                   &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, No, No,…
+$ high.cholesterol       &lt;fct&gt; Yes, Yes, No, No, Yes, No, No, Yes, Yes, Yes, Y…
+$ coronary.heart.disease &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, Yes, No…
+$ angina                 &lt;fct&gt; No, No, Yes, No, No, No, No, No, No, No, No, No…
+$ heart.attack           &lt;fct&gt; No, No, Yes, No, No, No, No, No, No, No, Yes, N…
+$ heart.disease          &lt;fct&gt; No, Yes, No, No, No, No, No, Yes, No, No, No, N…
+$ arthritis              &lt;fct&gt; No, No, Yes, Yes, Yes, No, Yes, No, No, No, Yes…
+$ crohns.disease         &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, No, No,…
+$ comorbidity            &lt;dbl&gt; 2, 3, 5, 2, 3, 2, 3, 3, 4, 2, 10, 2, 5, 4, 4, 7…
+$ place.routine.care     &lt;fct&gt; No place, NA, Hospital/Clinic, Doctor's office,…
+$ trouble.asleep         &lt;fct&gt; No, NA, Yes, No, No, No, No, No, No, No, Yes, N…
+$ obese                  &lt;fct&gt; No, No, No, Yes, No, Yes, No, No, No, No, Yes, …
+$ current.smoker         &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, No, No,…
+$ heavy.drinker          &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, No, No,…
+$ hospitalization        &lt;fct&gt; None, None, None, None, None, None, None, None,…
+$ better.health.status   &lt;fct&gt; No, No, No, No, No, No, No, No, No, No, No, Yes…
+$ physical.activity      &lt;fct&gt; Less, Less, Moderate, Less, Moderate, Less, Les…</code></pre>
+</div>
+</div>
+<p>Notamos que la base de datos contiene un total de 8,881 individuos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Cambio la definición para que diga con dolor / sin dolor</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">HICP_label =</span> <span class="fu">factor</span>(HICP, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"sin dolor"</span>, <span class="st">"con dolor"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos ver cómo se distribuye todo con una tabla breve de resumen por algunas covariables:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tbl_summary</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">include =</span> <span class="fu">c</span>(<span class="st">"sex"</span>, <span class="st">"obese"</span>, <span class="st">"age"</span>, <span class="st">"employment.status"</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> HICP, </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="sjgscdocur" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#sjgscdocur table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#sjgscdocur thead, #sjgscdocur tbody, #sjgscdocur tfoot, #sjgscdocur tr, #sjgscdocur td, #sjgscdocur th {
+  border-style: none;
+}
+
+#sjgscdocur p {
+  margin: 0;
+  padding: 0;
+}
+
+#sjgscdocur .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#sjgscdocur .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#sjgscdocur .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#sjgscdocur .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#sjgscdocur .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#sjgscdocur .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sjgscdocur .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#sjgscdocur .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#sjgscdocur .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#sjgscdocur .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#sjgscdocur .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#sjgscdocur .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#sjgscdocur .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#sjgscdocur .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#sjgscdocur .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#sjgscdocur .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#sjgscdocur .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#sjgscdocur .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#sjgscdocur .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sjgscdocur .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#sjgscdocur .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#sjgscdocur .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#sjgscdocur .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sjgscdocur .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#sjgscdocur .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#sjgscdocur .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sjgscdocur .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sjgscdocur .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#sjgscdocur .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sjgscdocur .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#sjgscdocur .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sjgscdocur .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#sjgscdocur .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sjgscdocur .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#sjgscdocur .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sjgscdocur .gt_left {
+  text-align: left;
+}
+
+#sjgscdocur .gt_center {
+  text-align: center;
+}
+
+#sjgscdocur .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#sjgscdocur .gt_font_normal {
+  font-weight: normal;
+}
+
+#sjgscdocur .gt_font_bold {
+  font-weight: bold;
+}
+
+#sjgscdocur .gt_font_italic {
+  font-style: italic;
+}
+
+#sjgscdocur .gt_super {
+  font-size: 65%;
+}
+
+#sjgscdocur .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#sjgscdocur .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#sjgscdocur .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#sjgscdocur .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#sjgscdocur .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#sjgscdocur .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#sjgscdocur .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#sjgscdocur .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#sjgscdocur div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header gt_col_headings">
+<th id="<div data-qmd-base64=&quot;KipDaGFyYWN0ZXJpc3RpYyoq&quot;><div class='gt_from_md'><p><strong>Characteristic</strong></p>
+</div></div>" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"><p><strong>Characteristic</strong></p></th>
+<th id="<div data-qmd-base64=&quot;KiowKiogIApOID0gNyw3OTI=&quot;><div class='gt_from_md'><p><strong>0</strong><br />
+N = 7,792</p>
+</div></div><span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;line-height: 0;&quot;><sup>1</sup></span>" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><p><strong>0</strong><br>
+N = 7,792</p>
+<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height: 0;"><sup>1</sup></span></th>
+<th id="<div data-qmd-base64=&quot;KioxKiogIApOID0gMSwwODk=&quot;><div class='gt_from_md'><p><strong>1</strong><br />
+N = 1,089</p>
+</div></div><span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;line-height: 0;&quot;><sup>1</sup></span>" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><p><strong>1</strong><br>
+N = 1,089</p>
+<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height: 0;"><sup>1</sup></span></th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">sex</td>
+<td class="gt_row gt_center" headers="stat_1"><br>
+</td>
+<td class="gt_row gt_center" headers="stat_2"><br>
+</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Female</td>
+<td class="gt_row gt_center" headers="stat_1">4,442 (57%)</td>
+<td class="gt_row gt_center" headers="stat_2">691 (63%)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Male</td>
+<td class="gt_row gt_center" headers="stat_1">3,350 (43%)</td>
+<td class="gt_row gt_center" headers="stat_2">398 (37%)</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">obese</td>
+<td class="gt_row gt_center" headers="stat_1">2,219 (28%)</td>
+<td class="gt_row gt_center" headers="stat_2">482 (44%)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">age</td>
+<td class="gt_row gt_center" headers="stat_1"><br>
+</td>
+<td class="gt_row gt_center" headers="stat_2"><br>
+</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;&lt;65</td>
+<td class="gt_row gt_center" headers="stat_1">0 (0%)</td>
+<td class="gt_row gt_center" headers="stat_2">0 (0%)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;65+</td>
+<td class="gt_row gt_center" headers="stat_1">7,792 (100%)</td>
+<td class="gt_row gt_center" headers="stat_2">1,089 (100%)</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">employment.status</td>
+<td class="gt_row gt_center" headers="stat_1"><br>
+</td>
+<td class="gt_row gt_center" headers="stat_2"><br>
+</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Employed hourly</td>
+<td class="gt_row gt_center" headers="stat_1">687 (8.8%)</td>
+<td class="gt_row gt_center" headers="stat_2">29 (2.7%)</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Employed non-hourly</td>
+<td class="gt_row gt_center" headers="stat_1">712 (9.2%)</td>
+<td class="gt_row gt_center" headers="stat_2">34 (3.1%)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Worked previously</td>
+<td class="gt_row gt_center" headers="stat_1">6,003 (77%)</td>
+<td class="gt_row gt_center" headers="stat_2">947 (87%)</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Never worked</td>
+<td class="gt_row gt_center" headers="stat_1">363 (4.7%)</td>
+<td class="gt_row gt_center" headers="stat_2">78 (7.2%)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Unknown</td>
+<td class="gt_row gt_center" headers="stat_1">27</td>
+<td class="gt_row gt_center" headers="stat_2">1</td>
+</tr>
+</tbody><tfoot class="gt_footnotes">
+<tr class="even">
+<td colspan="3" class="gt_footnote"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height: 0;"><sup>1</sup></span>
+<p>n (%)</p></td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+<p>Las covariables seleccionadas no son al azar son las que <span class="citation" data-cites="csenturk2023high">Şentürk et al. (<a href="references.html#ref-csenturk2023high" role="doc-biblioref">2023</a>)</span> seleccionaron como covariables que afectaban el dolor de alto impacto.</p>
+<p>Recuerda que lo mismo puede hacerse de manera más lenta con <code>count</code> y <code>mutate</code>. Por ejemplo para contar cuántos hubo por tipo de empleo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Creamos una nueva base que tenga la información de la proporción</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>proporcion_tbl_1 <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">employment.status</span><span class="st">`</span>, HICP_label) <span class="sc">|&gt;</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(HICP_label) <span class="sc">|&gt;</span> </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">proporcion =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">|&gt;</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>y que se puede representar gráficamente el conteo con <code>ggplot2</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Grafico</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(proporcion_tbl_1) <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> employment.status, <span class="at">y =</span> proporcion, <span class="at">fill =</span> HICP_label),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="st">""</span>, <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"deepskyblue2"</span>,<span class="st">"deepskyblue4"</span>)) <span class="sc">+</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">percent_format</span>()) <span class="sc">+</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Hospitalizado"</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Proporción"</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Proporción de personas con dolor crónico de alto impacto"</span>,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Fuente: Falasinnu et al"</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ejemplomodelo_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="modelo-versión-1" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="modelo-versión-1"><span class="header-section-number">3.4</span> Modelo (versión 1)</h2>
+<p>El modelo que nos interesa construir es un modelo de <strong>clasificación</strong> que <strong>prediga</strong> si un nuevo paciente será o no con dolor crónico de alto impacto. Inicialmente lo que haremos será dividir nuestra base de datos en dos conjuntos: de entrenamiento y de prueba.</p>
+<p>El conjunto de entrenamiento es para construir un modelo; el conjunto de prueba es para evaluar el modelo. Es decir, por un lado <strong>entrenamiento</strong> será usado para construir el modelo de predicción y por otro utilizaremos <strong>prueba</strong> para ver qué tan buen modelo es para predecir.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dividir los datos en entrenamiento y prueba</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">235724</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>data_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(dat, <span class="at">prop =</span> <span class="fl">0.8</span>) <span class="co">#La regla de dedo es 80% en entrenar / probar</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> <span class="fu">training</span>(data_split)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>test_data  <span class="ot">&lt;-</span> <span class="fu">testing</span>(data_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos ver que sí dividió los datos en aproximadamente el 80%:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>train_data <span class="sc">|&gt;</span> <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 7104</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>test_data <span class="sc">|&gt;</span> <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1777</code></pre>
+</div>
+</div>
+<p>Por otro lado utilizaremos un modelo de regresión logística:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Especificar el modelo de regresión logística</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>logistic_model <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"glm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Se agrega finalmente una receta de lo que se desea hacer en este caso es modelar <code>HIPC</code> en tèrminos de <code>sex</code>, <code>obesity</code> y <code>employment.status</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear una receta para el preprocesamiento</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(HICP_label <span class="sc">~</span> sex <span class="sc">+</span> obese <span class="sc">+</span> employment.status, <span class="at">data =</span> dat) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Todo se agrega en <code>R</code> dentro de un <code>workflow</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>modelaje <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(rec) <span class="sc">|&gt;</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(logistic_model) <span class="co">#Pueden agregarse más modelos poniendo más add_models aquí!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finalmente ajustamos el modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>logistic_fit <span class="ot">&lt;-</span> modelaje <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(<span class="at">data =</span> train_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Y vemos cómo se ven los predichos usando <code>predict</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Predecir en los datos de prueba</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>logistic_preds <span class="ot">&lt;-</span> logistic_fit <span class="sc">%&gt;%</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">predict</span>(<span class="at">new_data =</span> test_data) <span class="sc">%&gt;%</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(test_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos estimar la matriz de confusión para ver qué tan bueno es el modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>logistic_preds <span class="sc">|&gt;</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">conf_mat</span>(<span class="at">truth =</span> HICP_label, <span class="at">estimate =</span> .pred_class)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           Truth
+Prediction  sin dolor con dolor
+  sin dolor      1533       238
+  con dolor         0         0</code></pre>
+</div>
+</div>
+<p>Es un modelo muy malo pues a todos los predijo <code>sin_dolor</code>. Veamos un segundo modelo!</p>
+</section>
+<section id="modelo-versión-2" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="modelo-versión-2"><span class="header-section-number">3.5</span> Modelo (versión 2)</h2>
+<p>En este caso utilizaremos un modelo <code>LASSO</code>. LASSO es un modelo de regresión logística que automáticamente selecciona las variables que mejor ayudan a predecir. Veremos con mayor profundidad este concepto más adelante por ahora ajustemos el modelo agregando a un nuevo <code>workflow</code> del que ya teníamos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Especificar el modelo de regresión logística</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>lasso_model <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>(<span class="at">penalty =</span> <span class="fl">0.2</span>, <span class="at">mixture =</span> <span class="fl">0.1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"glmnet"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Agregamos a un nuevo workflow:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>modelaje_3 <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">recipe</span>(HICP_label <span class="sc">~</span> ., <span class="at">data =</span> dat) <span class="sc">|&gt;</span> </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">step_rm</span>(studyid) <span class="sc">|&gt;</span> </span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">step_unknown</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">step_naomit</span>(<span class="fu">all_predictors</span>()) </span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(lasso_model) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ajustamos</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>lasso_fit <span class="ot">&lt;-</span> modelaje_3 <span class="sc">|&gt;</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(<span class="at">data =</span> train_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Y vemos cómo se ven los predichos usando <code>predict</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Predecir en los datos de prueba</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>lasso_preds <span class="ot">&lt;-</span> lasso_fit <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">predict</span>(<span class="at">new_data =</span> test_data) <span class="sc">%&gt;%</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(test_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos estimar la matriz de confusión para ver qué tan bueno es el modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>lasso_preds <span class="sc">|&gt;</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">conf_mat</span>(<span class="at">truth =</span> HICP_label, <span class="at">estimate =</span> .pred_class)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           Truth
+Prediction  sin dolor con dolor
+  sin dolor      1515        70
+  con dolor         0       159</code></pre>
+</div>
+</div>
+<p>¡Mucho mejor!</p>
+<p>El proceso de un modelo como vimos es entonces:</p>
+<ol start="0" type="1">
+<li>Obtener un objetivo</li>
+<li>Procesamiento/transformación de los datos</li>
+<li>Dividir los datos en entrenamiento y prueba.</li>
+<li>Elegir el modelo</li>
+<li>Ajustar el modelo</li>
+<li>(<strong>Por ver</strong>) determinación de la calidad del modelo</li>
+</ol>
+</section>
+<section id="act1" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="act1"><span class="header-section-number">3.6</span> Actividad 1</h2>
+<ol type="1">
+<li><p>Con tu conocimiento (poco o mucho) de dolor crónico de alto impacto, construye un modelo logístico (no LASSO) distinto al que aquí se especifica. Llámale <code>modelo_3</code>.</p></li>
+<li><p>Utilizando exactamente las mismas variables que yo utilicé cambia el modelo en <code>add_model</code> al siguiente de aprendizaje de máquina:</p></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>rf <span class="ot">&lt;-</span> <span class="fu">boost_tree</span>(<span class="at">mode =</span> <span class="st">"classification"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"xgboost"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="actividad-2" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="actividad-2"><span class="header-section-number">3.7</span> Actividad 2</h2>
+<ol type="1">
+<li>Compara los modelos realizados en la <a href="#act1">actividad 1</a>. Determina cuál es el mejor modelo según las métricas de comparación.</li>
+</ol>
+</section>
+<section id="actividad-3" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="actividad-3"><span class="header-section-number">3.8</span> Actividad 3</h2>
+<ol type="1">
+<li><p>Utilizando la base de datos <code>datos/hechos_transito.rds</code> consturye un modelo que prediga si dado un hecho de tránsito habrá o no personas fallecidas en función de las covariables.</p></li>
+<li><p>Construye un segundo modelo incluyendo todas las covariables excepto <code>folio</code>, <code>hora_evento</code>, <code>matricula_unidad_medica</code> y <code>sector</code>. Utiliza el modelo que desees (yo recomiendo regresión LASSO pero puedes elegir lo que quieras).</p></li>
+<li><p>Compara ambos modelos y determina cuál es el mejor para predecir.</p></li>
+</ol>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-falasinnu2023problem" class="csl-entry" role="listitem">
+Falasinnu, Titilola, Md Belal Hossain, Kenneth Arnold Weber II, Charles G Helmick, Mohammad Ehsanul Karim, and Sean Mackey. 2023. <span>“The Problem of Pain in the United States: A Population-Based Characterization of Biopsychosocial Correlates of High Impact Chronic Pain Using the National Health Interview Survey.”</span> <em>The Journal of Pain</em> 24 (6): 1094–1103.
+</div>
+<div id="ref-csenturk2023high" class="csl-entry" role="listitem">
+Şentürk, İlteriş Ahmet, Erman Şentürk, Işıl Üstün, Akın Gökçedağ, Nilgün Pulur Yıldırım, and Nilüfer Kale İçen. 2023. <span>“High-Impact Chronic Pain: Evaluation of Risk Factors and Predictors.”</span> <em>The Korean Journal of Pain</em> 36 (1): 84–97.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./modelos.html" class="pagination-link" aria-label="Modelos">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Modelos</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./datos.html" class="pagination-link" aria-label="Datos">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Datos</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

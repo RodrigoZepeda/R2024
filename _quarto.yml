@@ -9,6 +9,10 @@ book:
   chapters:
     - index.qmd
     - instalar.qmd
+    - modelos.qmd
+    - ejemplomodelo.qmd
+    - datos.qmd
+    - paquetes.qmd
     - references.qmd
 
 options:

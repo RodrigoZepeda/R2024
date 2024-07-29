@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Uso de R para toma de decisiones en salud - 3&nbsp; Paquetes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./datos.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./paquetes.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Paquetes</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Uso de R para toma de decisiones en salud</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./instalar.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Instalación de <code>R</code> y <code>RStudio</code></span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./datos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Datos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./paquetes.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Paquetes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Paquetes</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>A continuación los paquetes y versiones utilizadas para generar este libro:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>sessioninfo<span class="sc">::</span><span class="fu">session_info</span>(<span class="at">pkgs =</span> <span class="st">"installed"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>─ Session info ───────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.4.0 (2024-04-24)
+ os       macOS Sonoma 14.5
+ system   x86_64, darwin20
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       America/Mexico_City
+ date     2024-07-28
+ pandoc   3.2.1 @ /usr/local/Caskroom/miniconda/base/bin/ (via rmarkdown)
+
+─ Packages ───────────────────────────────────────────────────────────────────
+ ! package           * version    date (UTC) lib source
+   abind               1.4-5      2016-07-21 [1] RSPM
+   anytime             0.3.9      2020-08-27 [1] RSPM
+   askpass             1.2.0      2023-09-03 [1] RSPM
+   backports           1.5.0      2024-05-23 [1] RSPM
+   base64enc           0.1-3      2015-07-28 [1] RSPM
+   BH                  1.84.0-0   2024-01-10 [1] RSPM
+   bigD                0.2.0      2022-09-05 [1] RSPM
+   bit                 4.0.5      2022-11-15 [1] RSPM
+   bit64               4.0.5      2020-08-30 [1] RSPM
+   bitops              1.0-7      2021-04-24 [1] CRAN (R 4.4.0)
+   blob                1.2.4      2023-03-17 [1] RSPM
+   boot                1.3-30     2024-02-26 [2] CRAN (R 4.4.0)
+   broom               1.0.6      2024-05-17 [1] RSPM
+   bslib               0.7.0      2024-03-29 [1] RSPM
+   cachem              1.1.0      2024-05-16 [1] RSPM
+   callr               3.7.6      2024-03-25 [1] RSPM
+   cellranger          1.1.0      2016-07-27 [1] RSPM
+   checkmate           2.3.1      2023-12-04 [1] RSPM
+   class               7.3-22     2023-05-03 [2] CRAN (R 4.4.0)
+ P cli                 3.6.3      2024-06-21 [?] RSPM
+   clipr               0.8.0      2022-02-22 [1] RSPM
+   clock               0.7.1      2024-07-18 [1] RSPM
+   cluster             2.1.6      2023-12-01 [2] CRAN (R 4.4.0)
+   codetools           0.2-20     2024-03-31 [2] CRAN (R 4.4.0)
+   colorspace          2.1-1      2024-07-26 [1] RSPM
+   commonmark          1.9.1      2024-01-30 [1] RSPM
+   conflicted          1.2.0      2023-02-01 [1] RSPM
+   cpp11               0.4.7      2023-12-02 [1] RSPM
+   crayon              1.5.3      2024-06-20 [1] RSPM
+   credentials         2.0.1      2023-09-06 [1] RSPM
+   crosstalk           1.2.1      2023-11-23 [1] RSPM
+   crul                1.5.0      2024-07-19 [1] RSPM
+   curl                5.2.1      2024-03-01 [1] RSPM
+   data.table          1.15.4     2024-03-30 [1] RSPM
+   DBI                 1.2.3      2024-06-02 [1] RSPM
+   dbplyr              2.5.0      2024-03-19 [1] RSPM
+   desc                1.4.3      2023-12-10 [1] RSPM
+   diagram             1.6.5      2020-09-30 [1] RSPM
+   dials               1.2.1      2024-02-22 [1] RSPM
+   DiceDesign          1.10       2023-12-07 [1] RSPM
+ P digest              0.6.36     2024-06-23 [?] RSPM
+   distributional      0.4.0      2024-02-07 [1] RSPM
+   doFuture            1.0.1      2023-12-20 [1] CRAN (R 4.4.0)
+   doParallel          1.0.17     2022-02-07 [1] CRAN (R 4.4.0)
+   dplyr               1.1.4      2023-11-17 [1] RSPM
+   dtplyr              1.3.1      2023-03-22 [1] RSPM
+   dygraphs            1.1.1.6    2018-07-11 [1] RSPM
+ P evaluate            0.24.0     2024-06-10 [?] CRAN (R 4.4.0)
+   extraDistr          1.10.0     2023-11-30 [1] RSPM
+   fansi               1.0.6      2023-12-08 [1] RSPM
+   farver              2.1.2      2024-05-13 [1] RSPM
+ P fastmap             1.2.0      2024-05-15 [?] RSPM
+   flextable           0.9.6      2024-05-05 [1] RSPM
+   fontawesome         0.5.2      2023-08-19 [1] RSPM
+   fontBitstreamVera   0.1.1      2017-02-01 [1] RSPM
+   fontLiberation      0.1.0      2016-10-15 [1] RSPM
+   fontquiver          0.2.1      2017-02-01 [1] RSPM
+   forcats             1.0.0      2023-01-29 [1] RSPM
+   foreach             1.5.2      2022-02-02 [1] RSPM
+   forecast            8.23.0     2024-06-20 [1] RSPM
+   foreign             0.8-87     2024-06-26 [2] CRAN (R 4.4.0)
+   fracdiff            1.5-3      2024-02-01 [1] RSPM
+   fs                  1.6.4      2024-04-25 [1] RSPM
+   furrr               0.3.1      2022-08-15 [1] RSPM
+   future              1.33.2     2024-03-26 [1] RSPM
+   future.apply        1.11.2     2024-03-28 [1] RSPM
+   gargle              1.5.2      2023-07-20 [1] RSPM
+   gdtools             0.3.7      2024-03-05 [1] RSPM
+   generics            0.1.3      2022-07-05 [1] RSPM
+   gert                2.1.0      2024-07-19 [1] RSPM
+   gfonts              0.2.0      2023-01-08 [1] RSPM
+   ggfortify           0.4.17     2024-04-17 [1] RSPM
+   ggplot2             3.5.1      2024-04-23 [1] RSPM
+   ggtext              0.1.2      2022-09-16 [1] RSPM
+   gh                  1.4.1      2024-03-28 [1] RSPM
+   gitcreds            0.1.2      2022-09-08 [1] RSPM
+   globals             0.16.3     2024-03-08 [1] RSPM
+   glue                1.7.0      2024-01-09 [1] RSPM
+   googledrive         2.1.1      2023-06-11 [1] RSPM
+   googlesheets4       1.1.1      2023-06-11 [1] RSPM
+   gower               1.0.1      2022-12-22 [1] RSPM
+   GPfit               1.0-8      2019-02-08 [1] RSPM
+   gridExtra           2.3        2017-09-09 [1] RSPM
+   gridtext            0.1.5      2022-09-16 [1] RSPM
+   gt                  0.11.0     2024-07-09 [1] RSPM
+   gtable              0.3.5      2024-04-22 [1] RSPM
+   hardhat             1.4.0      2024-06-02 [1] RSPM
+   haven               2.5.4      2023-11-30 [1] RSPM
+   highr               0.11       2024-05-26 [1] RSPM
+   hms                 1.1.3      2023-03-21 [1] RSPM
+ P htmltools           0.5.8.1    2024-04-04 [?] RSPM
+ P htmlwidgets         1.6.4      2023-12-06 [?] RSPM
+   httpcode            0.3.0      2020-04-10 [1] RSPM
+   httpuv              1.6.15     2024-03-26 [1] RSPM
+   httr                1.4.7      2023-08-15 [1] RSPM
+   httr2               1.0.2      2024-07-16 [1] RSPM
+   ids                 1.0.1      2017-05-31 [1] RSPM
+   infer               1.0.7      2024-03-25 [1] RSPM
+   ini                 0.3.1      2018-05-20 [1] RSPM
+   inline              0.3.19     2021-05-31 [1] RSPM
+   ipred               0.9-15     2024-07-18 [1] RSPM
+   isoband             0.2.7      2022-12-20 [1] RSPM
+   iterators           1.0.14     2022-02-05 [1] RSPM
+   janitor             2.2.0      2023-02-02 [1] RSPM
+   jpeg                0.1-10     2022-11-29 [1] RSPM
+   jquerylib           0.1.4      2021-04-26 [1] RSPM
+ P jsonlite            1.8.8      2023-12-04 [?] RSPM
+   juicyjuice          0.1.0      2022-11-10 [1] RSPM
+   KernSmooth          2.23-24    2024-05-17 [2] CRAN (R 4.4.0)
+ P knitr               1.48       2024-07-07 [?] CRAN (R 4.4.0)
+   labeling            0.4.3      2023-08-29 [1] RSPM
+   later               1.3.2      2023-12-06 [1] RSPM
+   lattice             0.22-6     2024-03-20 [2] CRAN (R 4.4.0)
+   lava                1.8.0      2024-03-05 [1] RSPM
+   lazyeval            0.2.2      2019-03-15 [1] RSPM
+   lhs                 1.2.0      2024-06-30 [1] RSPM
+   lifecycle           1.0.4      2023-11-07 [1] RSPM
+   listenv             0.9.1      2024-01-29 [1] RSPM
+   lme4                1.1-35.5   2024-07-03 [1] CRAN (R 4.4.0)
+   lmtest              0.9-40     2022-03-21 [1] CRAN (R 4.4.0)
+   loo                 2.8.0      2024-07-03 [1] CRAN (R 4.4.0)
+   lubridate           1.9.3      2023-09-27 [1] RSPM
+   magrittr            2.0.3      2022-03-30 [1] RSPM
+   markdown            1.13       2024-06-04 [1] CRAN (R 4.4.0)
+   MASS                7.3-61     2024-06-13 [2] CRAN (R 4.4.0)
+   Matrix              1.7-0      2024-03-22 [2] CRAN (R 4.4.0)
+   matrixStats         1.3.0      2024-04-11 [1] RSPM
+   memoise             2.0.1      2021-11-26 [1] RSPM
+   mgcv                1.9-1      2023-12-21 [2] CRAN (R 4.4.0)
+   mime                0.12       2021-09-28 [1] RSPM
+   minqa               1.2.7      2024-05-20 [1] RSPM
+   mitools             2.4        2019-04-26 [1] RSPM
+   modeldata           1.4.0      2024-06-19 [1] RSPM
+   modelenv            0.1.1      2023-03-08 [1] RSPM
+   modelr              0.1.11     2023-03-22 [1] RSPM
+   modeltime           1.2.8      2023-09-02 [1] RSPM
+   munsell             0.5.1      2024-04-01 [1] RSPM
+   nlme                3.1-165    2024-06-06 [2] CRAN (R 4.4.0)
+   nloptr              2.1.1      2024-06-25 [1] CRAN (R 4.4.0)
+   nnet                7.3-19     2023-05-03 [2] CRAN (R 4.4.0)
+   numDeriv            2016.8-1.1 2019-06-06 [1] RSPM
+   officer             0.6.6      2024-05-05 [1] RSPM
+   openssl             2.2.0      2024-05-16 [1] RSPM
+   padr                0.6.2      2022-11-23 [1] RSPM
+   parallelly          1.38.0     2024-07-27 [1] RSPM
+   parsnip             1.2.1      2024-03-22 [1] RSPM
+   patchwork           1.2.0      2024-01-08 [1] RSPM
+   pillar              1.9.0      2023-03-22 [1] RSPM
+   pkgbuild            1.4.4      2024-03-17 [1] RSPM
+   pkgconfig           2.0.3      2019-09-22 [1] RSPM
+   plotly              4.10.4     2024-01-13 [1] RSPM
+   png                 0.1-8      2022-11-29 [1] RSPM
+   posterior           1.6.0      2024-07-03 [1] CRAN (R 4.4.0)
+   prettyunits         1.2.0      2023-09-24 [1] RSPM
+   processx            3.8.4      2024-03-16 [1] RSPM
+   prodlim             2024.06.25 2024-06-24 [1] RSPM
+   progress            1.2.3      2023-12-06 [1] RSPM
+   progressr           0.14.0     2023-08-10 [1] RSPM
+   promises            1.3.0      2024-04-05 [1] RSPM
+   prophet             1.0        2021-03-30 [1] RSPM
+   ps                  1.7.7      2024-07-02 [1] CRAN (R 4.4.0)
+   purrr               1.0.2      2023-08-10 [1] RSPM
+   quadprog            1.5-8      2019-11-20 [1] CRAN (R 4.4.0)
+   quantmod            0.4.26     2024-02-14 [1] RSPM
+   QuickJSR            1.3.1      2024-07-14 [1] RSPM
+   R6                  2.5.1      2021-08-19 [1] RSPM
+   ragg                1.3.2      2024-05-15 [1] RSPM
+   rappdirs            0.3.3      2021-01-31 [1] RSPM
+   RColorBrewer        1.1-3      2022-04-03 [1] RSPM
+   Rcpp                1.0.13     2024-07-17 [1] RSPM
+   RcppArmadillo       14.0.0-1   2024-07-08 [1] CRAN (R 4.4.0)
+   RcppEigen           0.3.4.0.0  2024-02-28 [1] RSPM
+   RcppParallel        5.1.8      2024-07-06 [1] CRAN (R 4.4.0)
+   RcppRoll            0.3.1      2024-07-07 [1] RSPM
+   reactable           0.4.4      2023-03-12 [1] RSPM
+   reactR              0.6.0      2024-06-26 [1] RSPM
+   readr               2.1.5      2024-01-10 [1] RSPM
+   readxl              1.4.3      2023-07-06 [1] RSPM
+   recipes             1.1.0      2024-07-04 [1] RSPM
+   rematch             2.0.0      2023-08-30 [1] RSPM
+   rematch2            2.1.2      2020-05-01 [1] RSPM
+   remotes             2.5.0      2024-03-17 [1] RSPM
+   renv                1.0.7      2024-04-11 [1] CRAN (R 4.4.0)
+   reprex              2.1.1      2024-07-06 [1] CRAN (R 4.4.0)
+ P rlang               1.1.4      2024-06-04 [?] CRAN (R 4.4.0)
+ P rmarkdown           2.27       2024-05-17 [?] RSPM
+   rpart               4.1.23     2023-12-05 [2] CRAN (R 4.4.0)
+   rprojroot           2.0.4      2023-11-05 [1] RSPM
+   rsample             1.2.1      2024-03-25 [1] RSPM
+   rstan               2.32.6     2024-03-05 [1] RSPM
+   rstantools          2.4.0      2024-01-31 [1] RSPM
+ P rstudioapi          0.16.0     2024-03-24 [?] RSPM
+   rvest               1.0.4      2024-02-12 [1] RSPM
+   sass                0.4.9      2024-03-15 [1] RSPM
+   scales              1.3.0      2023-11-28 [1] RSPM
+   selectr             0.4-2      2019-11-20 [1] RSPM
+ P sessioninfo         1.2.2      2021-12-06 [?] RSPM
+   shape               1.4.6.1    2024-02-23 [1] RSPM
+   shiny               1.8.1.1    2024-04-02 [1] RSPM
+   slider              0.3.1      2023-10-12 [1] RSPM
+   snakecase           0.11.1     2023-08-27 [1] RSPM
+   sourcetools         0.1.7-1    2023-02-01 [1] RSPM
+   spatial             7.3-17     2023-07-20 [2] CRAN (R 4.4.0)
+   SQUAREM             2021.1     2021-01-13 [1] RSPM
+   srvyr               1.2.0      2023-02-21 [1] RSPM
+   StanHeaders         2.32.10    2024-07-15 [1] RSPM
+   stringi             1.8.4      2024-05-06 [1] RSPM
+   stringr             1.5.1      2023-11-14 [1] RSPM
+   survey              4.4-2      2024-03-20 [1] RSPM
+   survival            3.7-0      2024-06-05 [2] CRAN (R 4.4.0)
+   sys                 3.4.2      2023-05-23 [1] RSPM
+   systemfonts         1.1.0      2024-05-15 [1] RSPM
+   tensorA             0.36.2.1   2023-12-13 [1] RSPM
+   textshaping         0.4.0      2024-05-24 [1] RSPM
+   tibble              3.2.1      2023-03-20 [1] RSPM
+   tidymodels          1.2.0      2024-03-25 [1] RSPM
+   tidyr               1.3.1      2024-01-24 [1] RSPM
+   tidyselect          1.2.1      2024-03-11 [1] RSPM
+   tidyverse           2.0.0      2023-02-22 [1] RSPM
+   timechange          0.3.0      2024-01-18 [1] RSPM
+   timeDate            4032.109   2023-12-14 [1] RSPM
+   timetk              2.9.0      2023-10-31 [1] RSPM
+   tinytex             0.52       2024-07-18 [1] RSPM
+   triebeard           0.4.1      2023-03-04 [1] RSPM
+   tseries             0.10-56    2024-05-14 [1] RSPM
+   tsfeatures          1.1.1      2023-08-28 [1] RSPM
+   TTR                 0.24.4     2023-11-28 [1] RSPM
+   tune                1.2.1      2024-04-18 [1] RSPM
+   tzdb                0.4.0      2023-05-12 [1] RSPM
+   urca                1.3-4      2024-05-27 [1] RSPM
+   urltools            1.7.3      2019-04-14 [1] RSPM
+   usethis             2.2.3      2024-02-19 [1] RSPM
+   utf8                1.2.4      2023-10-22 [1] RSPM
+   uuid                1.2-0      2024-01-14 [1] RSPM
+   V8                  4.4.2      2024-02-15 [1] RSPM
+   vctrs               0.6.5      2023-12-01 [1] RSPM
+   viridisLite         0.4.2      2023-05-02 [1] RSPM
+   vroom               1.6.5      2023-12-05 [1] RSPM
+   warp                0.2.1      2023-11-02 [1] RSPM
+   whisker             0.4.1      2022-12-05 [1] RSPM
+   withr               3.0.0      2024-01-16 [1] RSPM
+   workflows           1.1.4      2024-02-19 [1] RSPM
+   workflowsets        1.1.0      2024-03-21 [1] RSPM
+ P xfun                0.46       2024-07-18 [?] RSPM
+   xgboost             1.7.8.1    2024-07-24 [1] RSPM
+   xml2                1.3.6      2023-12-04 [1] RSPM
+   xtable              1.8-4      2019-04-21 [1] RSPM
+   xts                 0.14.0     2024-06-05 [1] RSPM
+ P yaml                2.3.10     2024-07-26 [?] RSPM
+   yardstick           1.3.1      2024-03-21 [1] RSPM
+   zip                 2.3.1      2024-01-27 [1] RSPM
+   zoo                 1.8-12     2023-04-13 [1] RSPM
+
+ [1] /Users/rodrigozepedatello/Documents/Curso_R_decisiones/Uso de R para toma de decisiones en salud/renv/library/macos/R-4.4/x86_64-apple-darwin20
+ [2] /Users/rodrigozepedatello/Library/Caches/org.R-project.R/R/renv/sandbox/macos/R-4.4/x86_64-apple-darwin20/2edc1867
+
+ P ── Loaded and on-disk path mismatch.
+
+──────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./datos.html" class="pagination-link" aria-label="Datos">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Datos</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link" aria-label="Referencias">
+        <span class="nav-page-text">Referencias</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

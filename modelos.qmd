@@ -1,0 +1,93 @@
+# Modelos
+
+## ¿Qué son los modelos matemáticos?
+
+Un modelo en general es cualquier representación de la realidad que media entre una teoría y las observaciones o datos. Algunos modelos famosos son:
+
+```{r}
+#| echo: false
+#| message: false
+library(tidyverse, quietly = TRUE)
+```
+
+1.  Las células
+
+![Una célula según la Enciclopedia Británica](images/celula.webp){width="400"}
+
+2. El marxismo
+
+![Marx según Diego Rivera](images/marx.jpg){width="400"}
+
+3. Las regresiones lineales
+
+```{r}
+#| echo: false
+
+x <- rexp(100)
+y <- 10*x + rnorm(100, sd = 10)
+
+ggplot(tibble(x = x, y = y)) +
+  geom_smooth(aes(x = x, y = y), method = "lm", formula = 'y ~ x') +
+  geom_point(aes(x = x, y = y)) +
+  theme_bw()
+```
+
+Nosotros nos enfocaremos más en las regresiones lineales y menos en las primeras dos opciones. Pero es importante entender que, al igual que el resto del conocimiento científico, los modelos matemáticos son abstracciones en nada distintas a las teorías sociales, las explicaciones conceptuales en epidemiología @morgan1999models @frigg2006models.
+
+Para nosotros la definición que usaremos será que un modelo matemático es la de @porta2018dictionary:
+
+> Una representación de un proceso biológico, sistema o relación por medio de una ecuación matemática o conjunto de ecuaciones, muchas veces involucrando varias variables aleatorias. 
+
+Aunque extenderemos un poquito lo que es "ecuación" e incluiremos también algoritmos y programas donde no necesariamente es _obvio_ qué es una ecuación. 
+
+## Clasificación de los modelos
+
+Nosotros nos enfocaremos en dos formas para clasificar los modelos matemáticos según sus objetivos. 
+
+### Predicción vs inferencia
+
+El objetivo de un **modelo de predicción** es dada una cierta cantidad de observaciones, construir un modelo que establezca cómo se comportará una siguiente (nueva) observación. 
+
+Ejemplos de modelos de predicción: 
+
+  a. Modelos como @kuddus2021scenario buscan predecir qué pasaría con la tuberculosis en Bangladesh bajo distintos escenarios de intervención (como aumento en pruebas individuales, aumento en pruebas para susceptibilidad antimicrobiana, aumento en tratamientos). 
+  
+  b. Modelos como @benedum2020weekly que buscan predecir cuántos casos de dengue habrá en las siguientes semanas en distintas poblaciones. 
+  
+  c. Modelos como @placido2023deep que buscan predecir cáncer de páncreas según la historia clínica en las personas.
+  
+El objetivo de un **modelo de inferencia** es, dada una cierta cantidad de observaciones, determinar un parámetro que explique o describa a una población. 
+
+Ejemplos de modelos de inferencia:
+
+  a. La ENSANUT 2020 @vidana2021prevalence buscaba determinar la prevalencia de COVID-19 en la población. 
+  
+  b. @chew2000risk estableció una asociación causal entre exposición al virus del Nipah en Singapur y cerdos importados de Malasia. 
+  
+  c. Los costos de la atención a diabéticos en México (2010) establecidos por @rodriguez2010costos. 
+  
+### Clasificación vs regresión
+
+Un **modelo de clasificación** busca determinar a qué grupo (o grupos) pertenece una observación. En este caso un modelo de clasificación regresa etiquetas que determinan a qué grupo pertenece cada observación. Como ejemplos:
+
+  a. @placido2023deep buscaba determinar si un paciente desarrollaría cáncer (estaba en el grupo de riesgo de cáncer o no).
+  
+  b. @falasinnu2023problem determina factores que clasifican a los pacientes en riesgo de dolor crónico de alto impacto o no. 
+  
+Un **modelo de regresión** busca determinar un valor (o múltiples) para una observación. En este caso un modelo de regresión regresa un valor numérico (continuo) y potencialmente puede regresar cuantos números se requieran. Como ejemplos
+
+  a. La ENSANUT 2020 @vidana2021prevalence buscaba determinar la prevalencia de COVID-19 en la población (la prevalencia es un número). 
+  
+  b. Modelos como @benedum2020weekly que buscan predecir cuántos casos de dengue regresan varios números continuos (es una regresión). 
+  
+## Flujo de trabajo
+
+En el área de modelaje el flujo de trabajo no es lineal. Generalmente suponemos que los datos ya están dados y nos ciclamos en un proceso de 
+transformación, visualización y modelaje. El primer modelo siempre será malo y de ahí lo que resta es mejorar. El siguiente diagrama extraido de @wickham2023r explica un poco el proceso: 
+
+![Proceso de trabajo de modelos](images/proceso.png)
+
+El proceso de toma de decisiones está ahí dentro del proceso de hacer modelos. Veamos!
+
+
+

@@ -1,0 +1,63 @@
+# Datos
+
+En esta sección discutimos cada una de las bases de datos utilizadas en las notas y la fuente de las mismas. 
+
+::: {.callout-note}
+Si lo que quieres es acceso a los datos recuerda que están en el Github de estas notas, carpeta [`/datos`](https://github.com/RodrigoZepeda/R2024/tree/main/datos) 
+:::
+
+## `Falasinnu2023.RData`
+
+Tomada de las notas de [Advanced Epidemiological Methods](https://ehsanx.github.io/EpiMethods/) por M. Ehsan Karim. Los datos provienen del `National Health Interview Survey (NHIS) 2016 ` y fueron utilizados en @falasinnu2023problem para predecir dolor crónico de alto impacto (HICP). Las siguientes variables están presentes en la base:
+
+| Variable                   | Descripción                                |
+|-------------------------------|--------------------------------------------|
+| `studyid`                       | Identificador único                        |
+| `psu`                           | Pseudo-PSU                                 |
+| `strata`                        | Pseudoestrato                              |
+| `weight`                        | Peso muestral                              |
+| `HICP`                          | Dolor Crónico de Alto Impacto  (variable de resultado binaria)       |
+| `age`                           | Edad                                       |
+| `sex`                           | Sexo                                       |
+| `hhsize`                        | Número de personas en el hogar             |
+| `born`                          | Nacionalidad                               |
+| `marital`                       | Estado civil                               |
+| `region`                        | Región                                     |
+| `race`                          | Raza/etnia                                 |
+| `education`                     | Educación                                  |
+| `employment.status`             | Situación laboral                          |
+| `poverty.status`                | Estado de pobreza                          |
+| `veteran`                       | Veterano                                   |
+| `insurance`                     | Cobertura de seguro médico                 |
+| `sex.orientation`               | Orientación sexual                         |
+| `worried.money`                 | Preocupado por el dinero                   |
+| `good.neighborhood`             | Buen vecindario                            |
+| `psy.symptom`                   | Síntomas psicológicos                      |
+| `visit.ED`                      | Número de veces en Urgencias               |
+| `surgery`                       | Número de cirugías en los últimos 12 meses |
+| `dr.visit`                      | Tiempo transcurrido desde las visitas al médico |
+| `cancer`                        | Cáncer                                     |
+| `asthma`                        | Asma                                       |
+| `htn`                           | Hipertensión                               |
+| `liver.disease`                 | Enfermedad hepática                        |
+| `diabetes`                      | Diabetes                                   |
+| `ulcer`                         | Úlcera                                     |
+| `stroke`                        | Accidente cerebrovascular                  |
+| `emphysema`                     | Enfisema                                   |
+| `copd`                          | EPOC                                       |
+| `high.cholesterol`              | Colesterol alto                            |
+| `coronary.heart.disease`        | Enfermedad coronaria                       |
+| `angina`                        | Angina de pecho                            |
+| `heart.attack`                  | Infarto de miocardio                       |
+| `heart.disease`                 | Enfermedad cardíaca                        |
+| `arthritis`                     | Artritis y reumatismo                      |
+| `crohns.disease`                | Enfermedad de Crohn                        |
+| `place.routine.care`            | Lugar habitual de atención rutinaria       |
+| `trouble.asleep`                | Dificultad para conciliar el sueño         |
+| `obese`                         | Obesidad                                   |
+| `current.smoker`                | Fumador actual                             |
+| `heavy.drinker`                 | Bebedor empedernido                        |
+| `hospitalization`               | Días de estancia hospitalaria              |
+| `better.health.status`          | Mejor estado de salud                      |
+| `physical.activity`             | Actividad física                           |
+

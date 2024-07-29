@@ -1,0 +1,7 @@
+# Paquetes
+
+A continuación los paquetes y versiones utilizadas para generar este libro:
+
+```{r}
+sessioninfo::session_info(pkgs = "installed")
+```
